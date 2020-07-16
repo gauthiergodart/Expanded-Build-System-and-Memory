@@ -12,22 +12,30 @@
 #------------------------------------------------------------------------------
 # Makefile for multitarget build system
 #
-# Use: make [TARGET] [PLATFORM-OVERRIDES]
+# Use: make [TARGET] [PLATFORM] [DELIVERABLE] [VERBOSE]
 #
 # Build Targets:
-# 	  <FILE>.i		Builds <FILE>.i preprocessed file 
-#	  <FILE>.asm 	Builds <FILE>.asm assembly file 
-#	  <FILE>.o 		Builds <FILE>.o object file
-#	  compile-all 	Compile all object files, but do not link. Also generate
+# 	<FILE>.i		Builds <FILE>.i preprocessed file 
+#	<FILE>.asm 		Builds <FILE>.asm assembly file 
+#	<FILE>.o 		Builds <FILE>.o object file
+#	compile-all 	Compile all object files, but do not link. Also generate
 #					dependency files
-#	  build 		Builds and links all the files. Also generate .map file
+#	build 			Builds and links all the files. Also generate .map file
 #					and dependency files
-#	  clean 		Clear generated files
+#	clean 			Clear generated files
 #
 # Platform:
-#      HOST:		Host machine, using GCC
-#      MSP432:		Target system, being TI MSP432 Launchpad, 
+#   HOST:			Host machine, using GCC
+#   MSP432:			Target system, being TI MSP432 Launchpad, 
 #					using arm-none-eabi-gcc
+# 
+# Deliverable:
+#	COURSE1:		Compile time switch for course1 deliverable
+#	...:			No other deliverable supported yet
+#	
+# Verbose:		
+# 	1:				Display extra debug information
+#	0:				Do not display extra debug information
 #
 #------------------------------------------------------------------------------
 
@@ -36,9 +44,9 @@ include sources.mk
 # _______________ COMMON FLAGS ________________
 
 # Target
-TARGET = c1m2
+TARGET = c1final
 # Compile flags
-CFLAGS = $(CFLAGS_ARCH) -Wall -Werror -g -std=c99 -O0 -D$(PLATFORM) 
+CFLAGS = $(CFLAGS_ARCH) -Wall -Werror -g -std=c99 -O0 $(INCLUDES) -D$(PLATFORM) $(OPTIONS)
 # Preprocessor flags
 CPPFLAGS = -MT $@ -MD -MP
 # Linking flags
@@ -56,7 +64,7 @@ ifeq ($(PLATFORM),MSP432)
 	ARCH = armv7e-m
 	SPECS = nosys.specs
 	# Linker Flag
-	LINKER_FILE = ../msp432p401r.lds
+	LINKER_FILE = ./msp432p401r.lds
 	# Compiler flags and define
 	CC = arm-none-eabi-gcc
 	LD = arm-none-eabi-ld
@@ -78,17 +86,27 @@ ifeq ($(PLATFORM),HOST)
 	SIZE = size
 endif
 
+# _________________ OPTIONS ___________________
+
+ifeq ($(DELIVERABLE), COURSE1)
+	OPTIONS += -DCOURSE1
+endif
+
+ifeq ($(VERBOSE), 1)
+	OPTIONS += -DVERBOSE
+endif
+
 # ___________________ RULES ___________________
 
 # Generating .d files
 $(DEPFILES):
 
 $(TARGET).out: $(SRC)
-	$(CC) $(SRC) $(CFLAGS) $(LDFLAGS) $(INCLUDES) -o $@
+	$(CC) $(SRC) $(CFLAGS) $(LDFLAGS) -o $@
 
 .PHONY: compile-all
 compile-all: $(SRC)
-	$(CC) -c $(CFLAGS) $(INCLUDES) $^
+	$(CC) -c $(CFLAGS) $^
 
 .PHONY: build
 build: $(TARGET).out
@@ -96,16 +114,17 @@ build: $(TARGET).out
 
 .PHONY: clean
 clean:
-	rm -f *.i *.s *.asm *.o *.d *.out *.map
+	rm -f *.asm *.out *.map
+	rm -f ./src/*.i ./src/*.asm ./src/*.o ./src/*.d
 
-%.i: %.c
-	$(CC) -E $(CFLAGS) $(INCLUDES) -o $@ $^
+%.i: ./src/%.c
+	$(CC) -E $(CFLAGS) -o ./src/$@ $^
 
-%.asm: %.o 
-	$(DUMP) -S --disassemble $< > $@
+%.asm: ./src/%.o 
+	$(DUMP) -S -d $< > ./src/$@
 
-%.asm: %.out
-	$(DUMP) -S --disassemble $< > $@
+%.asm: ./src/%.out
+	$(DUMP) -S -d $< > ./src/$@
 
-%.o: %.c %.d
-	$(CC) $(CPPFLAGS) -c $(CFLAGS) $(INCLUDES) -o $@ $< 
+%.o: ./src/%.c ./src/%.d
+	$(CC) $(CPPFLAGS) -c -o ./src/$@ $< 

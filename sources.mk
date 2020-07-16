@@ -9,21 +9,27 @@
 #
 #*****************************************************************************
 
-MSP_SOURCES = \
-	./main.c \
-	./memory.c \
-	./startup_msp432p401r_gcc.c \
-	./system_msp432p401r.c  \
-	./interrupts_msp432p401r_gcc.c  
-	
-MSP_INCLUDES = \
-	-I../include/CMSIS \
-	-I../include/common \
-	-I../include/msp432
+MSP_SOURCES = 							\
+	./src/main.c 						\
+	./src/memory.c 						\
+	./src/stats.c 						\
+	./src/course1.c  					\
+	./src/data.c 						\
+	./src/startup_msp432p401r_gcc.c 	\
+	./src/system_msp432p401r.c  		\
+	./src/interrupts_msp432p401r_gcc.c 	
+		
+MSP_INCLUDES = 			\
+	-I./include/CMSIS 	\
+	-I./include/common 	\
+	-I./include/msp432
 
-HOST_SOURCES = \
-	./main.c  \
-	./memory.c
+HOST_SOURCES = 		\
+	./src/main.c  	\
+	./src/memory.c 	\
+	./src/stats.c 	\
+	./src/course1.c \
+	./src/data.c
 
-HOST_INCLUDES = \
-	-I../include/common
+HOST_INCLUDES = 	\
+	-I./include/common

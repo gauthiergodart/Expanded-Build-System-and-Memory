@@ -9,10 +9,10 @@
  *
  *****************************************************************************/
 /**
- * @file STATS 
- * @brief STATS is a set of statistical functions that can be used with an array.
+ * @file stats.c 
+ * @brief stats.c is a set of statistical functions that can be used with an array.
  *
- * STATS is a set of statistical functions that can be used with an array. 
+ * stats.c is a set of statistical functions that can be used with an array. 
  * Each function takes two inputs: an array of unsigned char, and its length. 
  * Most of the functions return a unsigned char (max, min, med, mean). Some of 
  * them returns nothing, but print statistical informations on the screen. 
@@ -22,13 +22,12 @@
  *
  */
 
-#include <stdio.h>
 #include "stats.h"
 
 /* Size of the Data Set */
 #define SIZE (40)
 
-void main() {
+void main2() {
 
   unsigned char test[SIZE] = { 34, 201, 190, 154,   8, 194,   2,   6,
                               114,  88,  45,  76, 123,  87,  25,  23,
@@ -55,19 +54,18 @@ void main() {
 void print_statistics ( unsigned char a[], int n ) {
 	
 	// First, print the array
-	printf(" _____________________\n");
-	printf("|                     |\n");
-	printf("|  Array:             |\n");
+
+	printf("Array:\n");
 	print_array(a, n);
-	printf("|                     |\n");
 	
 	// Then, sort the array and re-print it
-	printf("|  Sorted array:      |\n");
+	printf("Sorted array:\n");
 	sort_array(a, n);
 	print_array(a, n);
-	printf("|                     |\n");
-
+	
 	// Finally, print all the statistics, rounded to the nearest integer
+	printf(" _____________________\n");
+	printf("|                     |\n");
 	printf("|  Median:  %3i       |\n", find_median(a, n));
 	printf("|  Mean:    %3i       |\n", find_mean(a, n));
 	printf("|  Maximum: %3i       |\n", find_maximum(a, n));	
@@ -84,19 +82,24 @@ void print_statistics ( unsigned char a[], int n ) {
 }
 
 void print_array ( unsigned char a[], int n ) {
+	#ifdef VERBOSE
 	int i;
-	printf("|  %3i", a[0]);
+	PRINTF(" _____________________\n");
+	PRINTF("|                     |\n");
+	PRINTF("|  %3i", a[0]);
 	for ( i = 1; i < n; i++ ) {
 		if ( i%4 == 0)
-			printf(" |\n|  %3i", a[i]);
+			PRINTF(" |\n|  %3i", a[i]);
 		else 
-			printf(", %3i", a[i]);
+			PRINTF(", %3i", a[i]);
 	}
 	if ( n%4 != 0) {
 		for ( i=0; i<(4-(n%4)); i++)
-			printf("     ");
+			PRINTF("     ");
 	}
-	printf(" |\n");
+	PRINTF(" |\n");
+	PRINTF("|_____________________|\n\n");
+	#endif
 }
 
 unsigned char find_median ( unsigned char a[], int n ) {

@@ -16,8 +16,8 @@
  * writing to memory via function calls. There is also a globally
  * allocated buffer array used for manipulation.
  *
- * @author Alex Fosdick
- * @date April 1 2017
+ * @author Alex Fosdick and Gauthier Godart
+ * @date April 1 2017 - Updated Jul 15 2020 by Gauthier Godart
  *
  */
 #include "memory.h"
@@ -48,3 +48,74 @@ void clear_all(char * ptr, unsigned int size){
   set_all(ptr, 0, size);
 }
 
+uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length){
+
+	uint8_t i = 0;
+	uint8_t *tmp;
+	tmp = (uint8_t*) reserve_words(length);
+
+	for( i = 0; i < length; i++){
+		*(tmp + i ) = *( src + i );
+	}
+
+	for( i = 0; i < length; i++){
+		*(dst + i ) = *( tmp + i );
+	}
+
+	free_words((uint32_t*) tmp);
+
+	return dst;
+}
+
+uint8_t * my_memcopy(uint8_t * src, uint8_t * dst, size_t length) {
+	
+	uint8_t i = 0;
+
+	for( i = 0; i < length; i++ )
+		*( dst+i ) = *( src+i );
+
+	return dst;
+}
+
+uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value) {
+	
+	uint8_t i = 0;
+
+	for ( i = 0; i < length; i++) 
+		*( src + i ) = value;
+
+	return src;
+}
+
+uint8_t * my_memzero(uint8_t * src, size_t length) {
+	
+	uint8_t i = 0;
+
+	for ( i = 0; i < length; i++)
+		*( src + i ) = 0;
+
+	return src;
+}
+
+uint8_t * my_reverse(uint8_t * src, size_t length) {
+	
+	uint8_t i = 0;
+	int32_t tmp;
+	
+	for ( i = 0; i <= (length-1)/2 ; i++ ) {
+		tmp = *( src + i );
+		*( src + i ) = *( src + length - 1 - i);
+		*( src + length - 1 - i) = tmp;
+	}
+	
+	return src;
+}
+
+
+int32_t * reserve_words(size_t length) {
+	return (int32_t *) malloc (length * sizeof(int32_t)); 
+}
+
+void free_words(uint32_t * src) {
+	free(src);
+}

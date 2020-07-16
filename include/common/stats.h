@@ -9,10 +9,10 @@
  *
  *****************************************************************************/
 /**
- * @file STATS 
- * @brief STATS is a set of statistical functions that can be used with an array.
+ * @file stats.h 
+ * @brief stats.h is a set of statistical functions that can be used with an array.
  *
- * STATS is a set of statistical functions that can be used with an array. 
+ * stats.h is a set of statistical functions that can be used with an array. 
  * Each function takes two inputs: an array of unsigned char, and its length. 
  * Most of the functions return a unsigned char (max, min, med, mean). Some of 
  * it returns nothing, but print statistical informations on the screen. 
@@ -21,9 +21,11 @@
  * @date July 2 2020
  *
  */
+
 #ifndef __STATS_H__
 #define __STATS_H__
 
+#include "platform.h"
 
 /**
  * @brief Print all the statistical informations about the array
